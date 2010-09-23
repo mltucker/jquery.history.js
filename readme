@@ -1,0 +1,56 @@
+This is a jquery plugin that allows you to easily add undo/redo
+functionality to your application.
+
+It uses jQuery's $.data store to keep a stack of undo and redo
+mementos.  A memento is any object which has both 'undo' and 'redo'
+functions.  An optional 'commit' function will be called, which can
+make implementation easier.
+
+The most common usage is to create an object that knows how to handle
+a specific type of state change.  Whenever we change this state in our
+application, we create a new memento of this type, and tell the
+history plugin to remember it.
+
+function ChangeFooMemento(foo) {
+  var before, after;
+  before = foo.dumpState();
+  
+  function commit() {
+    after = foo.dumpState();
+  }
+
+  function undo() {
+    foo.restoreState(before);
+  }
+
+  function after() {
+    foo.restoreState(after);
+  }
+}
+
+$(bar).history(); // create the history
+
+// ... later
+
+var memento = new ChangeFooState(foo);
+foo.change();
+
+// We now tell the history to remember the state.  This will call
+// foo's commit, and put it on the undo stack.  Also, the redo stack
+// is cleared here.
+$(bar).history('remember', foo);
+
+// ... later
+
+// Next we call undo.  foo's state is returned to what it was before
+// foo.change() (so long as dumpState and restoreState work).  undo
+// will pop the memento off the undo stack, and push it on the redo
+// stack.
+$(bar).history('undo');
+
+// ... later
+
+// Finally we can redo.  The memento is popped off the redo stack, and
+// pushed on the undo stack.
+$(bar).history('redo');
+
