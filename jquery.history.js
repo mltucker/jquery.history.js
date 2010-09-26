@@ -7,6 +7,10 @@
  * Date: Wed Sep 22 20:16:25 CDT 2010
  **/
 
+/**
+ * API: see README
+ **/
+
 (function($) {
     var name = "history", initialize, methods;
 
